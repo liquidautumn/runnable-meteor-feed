@@ -11,25 +11,32 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+
+    function getCommits() {
+        Meteor.http.get("https://api.github.com/repos/meteor/meteor/commits", function (error, result) {
+            if (result.statusCode === 200) {
+                for (var i = 0; i < result.data.length; i++) {
+                    var c = result.data[i];
+                    if (Commits.find({sha: c.sha}).fetch().length == 0){
+                        Commits.insert({
+                            sha: c.sha,
+                            author: c.commit.author.name,
+                            message: c.commit.message,
+                            createdAt: Date.now()
+                        });
+                    }
+                }
+            } else {
+                console.log(result);
+            }
+        });
+    }
+
+    getCommits();
+
     Meteor.startup(function () {
         Meteor.setInterval(function () {
-            Meteor.http.get("https://api.github.com/repos/meteor/meteor/commits", function (error, result) {
-                if (result.statusCode === 200) {
-                    for (var i = 0; i < result.data.length; i++) {
-                        var c = result.data[i];
-                        if (Commits.find({sha: c.sha}).fetch().length == 0){
-                            Commits.insert({
-                                sha: c.sha,
-                                author: c.commit.author.name,
-                                message: c.commit.message,
-                                createdAt: Date.now()
-                            });
-                        }
-                    }
-                } else {
-                    console.log(result);
-                }
-            });
+            getCommits();
         }, 1000 * 60 * 5);
     });
 }
