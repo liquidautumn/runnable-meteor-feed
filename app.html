@@ -1,0 +1,28 @@
+<head>
+  <title>Meteor feed example</title>
+</head>
+
+<body>
+  {{> commitlist}}
+</body>
+
+<template name="commitlist">
+    <h1>Recent Meteor.js repository commits</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Message</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#each commits}}
+            <tr>
+                <td>{{author}}</td>
+                <td>{{message}}</td>
+                <td>{{prettyDate createdAt}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+</template>
