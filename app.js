@@ -13,7 +13,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 
     function getCommits() {
-        Meteor.http.get("https://api.github.com/repos/meteor/meteor/commits", function (error, result) {
+        Meteor.http.get("https://api.github.com/repos/meteor/meteor/commits", { headers: {"User-Agent": "Meteor/1.0" } }, function (error, result) {
             if (result.statusCode === 200) {
                 for (var i = 0; i < result.data.length; i++) {
                     var c = result.data[i];
